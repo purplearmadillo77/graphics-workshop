@@ -21,33 +21,48 @@ void main() {
     vec3 color = 0.5 + 0.5 * vec3(noise1, noise2, noise8);
 
     // 1. Fractal noise scales: uncomment each line, one at a time
-    // color = vec3(0.5);
-    // color += 0.5 * noise8;
-    // color += 0.25 * noise4;
-    // color += 0.1 * noise2;
-    // color += 0.05 * noise1;
+     color = vec3(0.5);
+     color += 0.5 * noise8;
+     color += 0.25 * noise4;
+     color += 0.1 * noise2;
+     color += 0.05 * noise1;
 
     // 2. Generate "water" and "land"
-    // float elevation = 0.3 - 0.2 * max(length(coord) - 20.0, 0.0);
-    // elevation += noise8 + noise4 * 0.2 + noise2 * 0.1 + noise1 * 0.05;
-    // float landFactor = smoothstep(-0.05, 0.05, elevation);
-    // float deepSea = smoothstep(-0.1, -0.3, elevation);
-    // float deepColor = 0.8 - 0.3 * smoothstep(-0.2, -0.5, elevation);
-    // vec3 waterColor = mix(vec3(0.2, 0.2, 0.8), vec3(0.0, 0.0, deepColor), deepSea);
-    // color = mix(waterColor, vec3(0.0, 0.6, 0.0), landFactor);
+     float elevation = 0.3 - 0.2 * max(length(coord) - 20.0, 0.0);
+     elevation += noise8 + noise4 * 0.2 + noise2 * 0.1 + noise1 * 0.05;
+     float landFactor = smoothstep(-0.05, 0.05, elevation);
+     float deepSea = smoothstep(-0.1, -0.3, elevation);
+     float deepColor = 0.8 - 0.3 * smoothstep(-0.2, -0.5, elevation);
+     vec3 waterColor = mix(vec3(0.2, 0.2, 0.8), vec3(0.0, 0.0, deepColor), deepSea);
+     color = mix(waterColor, vec3(0.0, 0.6, 0.0), landFactor);
 
     // 3. Generate "mountains" and "beaches" based on elevation
-    // float mountainFactor = (elevation - 1.0) * 5.0;
-    // vec3 mountainColor = vec3(0.12, 0.15, 0.1);
-    // mountainColor = mix(mountainColor, vec3(0.4, 0.32, 0.4), smoothstep(0.7, 0.8, mountainFactor));
-    // mountainColor = mix(mountainColor, vec3(0.9, 0.9, 0.9), smoothstep(1.1, 1.15, mountainFactor));
-    // vec3 landColor = mix(vec3(0.0, 0.6, 0.0), mountainColor, smoothstep(0.0, 0.1, mountainFactor));
-    // float grassFactor = smoothstep(0.75, 0.7, elevation);
-    // landColor = mix(landColor, vec3(0.2, 0.8, 0.0), grassFactor);
-    // float beachFactor = smoothstep(0.5, 0.4, elevation);
-    // landColor = mix(landColor, vec3(0.9, 0.9, 0.5), beachFactor);
-    // color = mix(waterColor, landColor, landFactor);
-
+     float mountainFactor = (elevation - 1.0) * 5.0;
+     vec3 mountainColor = vec3(0.12, 0.15, 0.1);
+     mountainColor = mix(mountainColor, vec3(0.4, 0.32, 0.4), smoothstep(0.7, 0.8, mountainFactor));
+     mountainColor = mix(mountainColor, vec3(0.9, 0.9, 0.9), smoothstep(1.1, 1.15, mountainFactor));
+     vec3 landColor = mix(vec3(0.0, 0.6, 0.0), mountainColor, smoothstep(0.0, 0.1, mountainFactor));
+     float grassFactor = smoothstep(0.75, 0.7, elevation);	
+     landColor = mix(landColor, vec3(0.2, 0.8, 0.0), grassFactor);
+     float beachFactor = smoothstep(0.5, 0.4, elevation);
+     landColor = mix(landColor, vec3(0.9, 0.9, 0.5), beachFactor);
+	 color = mix(waterColor, landColor, landFactor);
+	 
+	// 4. Add temperature!
+	
+	// Bigger denominator means bigger splotches. 100 = HUGE splotches. Maybe there are volcanoes...
+	float tempnoise = snoise(vec2(seed * 10000.0, 4e3) + coord / 100.0);
+	float temperature = tempnoise;
+	vec3 warmColor = vec3(8.0, 5.0, -5.0); // supposedly orange
+	vec3 hotColor = vec3(9.0, 0.0, -3.0); // supposedly hot red
+	
+	// make some regions warm...
+	vec3 tempColor = mix(vec3(0.33, 0.33, 0.33), warmColor, smoothstep(0.2, 0.4, temperature));
+	// ...and some other regions hot
+	tempColor = mix(tempColor, hotColor, smoothstep(0.7, 0.8, temperature));
+	
+	color = mix(tempColor, color, 0.89);
+	
     gl_FragColor = vec4(color, 1.0);
 }
 

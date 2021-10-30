@@ -75,6 +75,8 @@ Hit intersect(Ray r) {
         Material(vec3(1.0, 0.4, 0.2), vec3(0.8), true, false));
     sphere(h, r, vec4(-3.5, -1.2, -6.0, 0.8),
         Material(vec3(0.2, 0.6, 0.3), vec3(0.8), false, false));
+	sphere(h, r, vec4(-6.5, 0.6, -6.0, 0.4),
+        Material(vec3(0.3, 0.1, 0.3), vec3(0.9), false, false));
     circle(h, r, -2.0, 50.0,
         Material(vec3(0.8, 0.8, 0.8), vec3(0.0), false, true));
     return h;
@@ -82,6 +84,10 @@ Hit intersect(Ray r) {
 
 // Compute lighting from one light
 vec3 illuminate(vec3 lightPosition, vec3 pos, vec3 wo, Hit h) {
+	
+	Ray myRay = Ray(pos, lightPosition - pos);	
+	if (intersect(myRay).time != inf) {return vec3(0.0);}
+
     vec3 wi = lightPosition - pos;
     vec3 kd = h.material.kd;
     if (h.material.checker) {
@@ -105,6 +111,7 @@ vec3 calcLighting(vec3 pos, vec3 wo, Hit h) {
     vec3 color = vec3(0.0);
     color += 100.0 * illuminate(vec3(-3.0, 10.0, 0.0), pos, wo, h);
     color += 200000.0 * illuminate(vec3(0.0, 1000.0, 0.0), pos, wo, h);
+	color += 3000.0 * illuminate(vec3(1000.0, 0.0, 0.0), pos, wo, h);
     return color;
 }
 

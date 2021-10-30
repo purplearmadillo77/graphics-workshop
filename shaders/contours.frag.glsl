@@ -14,8 +14,16 @@ vec3 illuminate(vec3 lightPosition) {
     vec3 wi = lightPosition - vPosition;
     float intensity = 1.0 / dot(wi, wi); // inverse-square law
     vec3 diffuse = kd * max(dot(normalize(wi), normalize(vNormal)), 0.0);
+	
+	vec3 wo = normalize(eye - vPosition);
+	vec3 r = reflect(normalize(wi), normalize(vNormal));
+	
+	float result = 0.0;
+	if (dot(r,wo) < 0.0) { result = pow(-dot(wo, r), shininess); }
 
-    vec3 specular = vec3(0.0); // Change me!
+	vec3 specular;
+	//specular = vec3(0.0); // Change me!
+	specular = vec3(ks * result); // Change me!
 
     return intensity * (diffuse + specular);
 }
