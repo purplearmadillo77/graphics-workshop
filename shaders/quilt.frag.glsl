@@ -39,4 +39,5 @@ void main() {
     //float blue = 0.4 * (1.0 - sin(dist_to_center * 80.0));
     //float blue = 1.0 - 1e5 * pow(dist_to_center - 0.4, 2.0);
     //gl_FragColor = vec4(coord, blue, 1.0);
+// test comment
 }
